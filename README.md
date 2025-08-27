@@ -4,7 +4,7 @@ A simple React application bootstrapped with **Create React App**.
 This project demonstrates the basics of React components, state management, and routing.  
 Deployed and running live on **Vercel** 🚀  
 
-👉 **Live Demo:** [View on Vercel](https://your-vercel-app-url.vercel.app)
+👉 **Live Demo:** [View on Vercel](https://usepopcorne-383tcaifi-sadafs-projects-6964b359.vercel.app/)
 
 ---
 
