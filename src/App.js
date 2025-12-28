@@ -5,6 +5,8 @@ import useMovies from "./useMovies";
 import useLocalStorage from "./localStorage";
 import useKey from "./useKey";
 let KEY = "c19b22f2";
+const PLACEHOLDER_POSTER =
+  "https://via.placeholder.com/300x450?text=No+Image";
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
@@ -182,9 +184,20 @@ function MoveisList({ movies, onSelectedId }) {
   );
 }
 function Movie({ movie, onSelectedId }) {
+  const posterSrc =
+    movie.Poster && movie.Poster !== "N/A"
+      ? movie.Poster
+      : PLACEHOLDER_POSTER;
   return (
     <li onClick={() => onSelectedId(movie.imdbID)}>
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
+      <img
+        src={posterSrc}
+        onError={(e) => {
+          if (e.currentTarget.src !== PLACEHOLDER_POSTER)
+            e.currentTarget.src = PLACEHOLDER_POSTER;
+        }}
+        alt={`${movie.Title} poster`}
+      />
       <h3>{movie.Title}</h3>
       <div>
         <p>
@@ -254,9 +267,18 @@ function Summary({ watched }) {
   );
 }
 function WatchMovie({ movie, onCleanWatched }) {
+  const posterSrc =
+    movie.poster && movie.poster !== "N/A" ? movie.poster : PLACEHOLDER_POSTER;
   return (
     <li>
-      <img src={movie.poster} alt={`${movie.title} poster`} />
+      <img
+        src={posterSrc}
+        onError={(e) => {
+          if (e.currentTarget.src !== PLACEHOLDER_POSTER)
+            e.currentTarget.src = PLACEHOLDER_POSTER;
+        }}
+        alt={`${movie.title} poster`}
+      />
       <h3>{movie.title}</h3>
       <div>
         <p>
@@ -318,7 +340,7 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
         try {
           setIsLoading(true);
           let res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
+            `https://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`
           );
           if (!res.ok) {
             throw new Error("somethig is wrong ,please wait");
@@ -386,7 +408,16 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
             <button className="btn-back" onClick={onCloseMovie}>
               &larr;
             </button>{" "}
-            <img src={poster} alt={`Post of${movie}`} />
+            <img
+              src={
+                poster && poster !== "N/A" ? poster : PLACEHOLDER_POSTER
+              }
+              onError={(e) => {
+                if (e.currentTarget.src !== PLACEHOLDER_POSTER)
+                  e.currentTarget.src = PLACEHOLDER_POSTER;
+              }}
+              alt={`Post of${movie}`}
+            />
             <div className="details-overview">
               <h2>{title}</h2>{" "}
               <p>
