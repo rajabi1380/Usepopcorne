@@ -16,9 +16,7 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
-  // const [isOpen2, setIsOpen2] = useState(true);
-
-  // ✅ این دو تا باید stable باشن تا useMovies هی دوباره اجرا نشه
+  // ✅ stable handlers (برای جلوگیری از رندر/فچ اضافه)
   const handleCloseMovie = useCallback(() => {
     setSelectedId(null);
   }, []);
@@ -175,6 +173,9 @@ function Movie({ movie, onSelectedId }) {
       <img
         src={movie.Poster !== "N/A" ? movie.Poster : PLACEHOLDER_POSTER}
         alt={`${movie.Title} poster`}
+        onError={(e) => {
+          e.currentTarget.src = PLACEHOLDER_POSTER;
+        }}
       />
       <h3>{movie.Title}</h3>
       <div>
@@ -223,6 +224,9 @@ function WatchMovie({ movie, onDeleteWatch }) {
       <img
         src={movie.poster !== "N/A" ? movie.poster : PLACEHOLDER_POSTER}
         alt={`${movie.title} poster`}
+        onError={(e) => {
+          e.currentTarget.src = PLACEHOLDER_POSTER;
+        }}
       />
       <h3>{movie.title}</h3>
       <div>
@@ -239,7 +243,10 @@ function WatchMovie({ movie, onDeleteWatch }) {
           <span>{movie.runtime} min</span>
         </p>
 
-        <button className="btn-delete" onClick={() => onDeleteWatch(movie.imdbID)}>
+        <button
+          className="btn-delete"
+          onClick={() => onDeleteWatch(movie.imdbID)}
+        >
           X
         </button>
       </div>
@@ -343,7 +350,10 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
             </button>
             <img
               src={poster !== "N/A" ? poster : PLACEHOLDER_POSTER}
-              alt={`Poster of ${movie} movie`}
+              alt={`Poster of ${title}`}
+              onError={(e) => {
+                e.currentTarget.src = PLACEHOLDER_POSTER;
+              }}
             />
             <div className="details-overview">
               <h2>{title}</h2>
