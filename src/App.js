@@ -6,7 +6,7 @@ import useLocalStorage from "./localStorage";
 import useKey from "./useKey";
 let KEY = "c19b22f2";
 const PLACEHOLDER_POSTER =
-  "https://via.placeholder.com/300x450?text=No+Image";
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='450' viewBox='0 0 300 450'><rect width='300' height='450' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%236b7280' font-family='Arial' font-size='24'>No Image</text></svg>";
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 

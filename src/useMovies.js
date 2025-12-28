@@ -9,14 +9,15 @@ function useMovies(query, callBack) {
       callBack?.();
       let controller = new AbortController();
       async function getData() {
+        const normalizedQuery = query.trim();
+        const url = `https://www.omdbapi.com/?apikey=${KEY}&s=${encodeURIComponent(
+          normalizedQuery
+        )}`;
         try {
           setIsLoading(true);
           setError("");
           // Use https to avoid mixed-content errors on production.
-          let fetchedData = await fetch(
-            `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-            { signal: controller.signal }
-          );
+          let fetchedData = await fetch(url, { signal: controller.signal });
 
           if (!fetchedData.ok) {
             throw new Error("something went wrong with fetch movies");
@@ -35,7 +36,7 @@ function useMovies(query, callBack) {
         }
       }
 
-      if (query.length < 3) {
+      if (query.trim().length < 3) {
         setMovies([]);
         setError("");
         return;
