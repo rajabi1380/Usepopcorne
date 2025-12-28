@@ -1,54 +1,65 @@
 import { useState, useEffect } from "react";
+
 let KEY = "c19b22f2";
+
 function useMovies(query, callBack) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  let [error, setError] = useState("");
-  useEffect(
-    function () {
-      callBack?.();
-      let controller = new AbortController();
-      async function getData() {
-        const normalizedQuery = query.trim();
-        const url = `https://www.omdbapi.com/?apikey=${KEY}&s=${encodeURIComponent(
-          normalizedQuery
-        )}`;
-        try {
-          setIsLoading(true);
-          setError("");
-          // Use https to avoid mixed-content errors on production.
-          let fetchedData = await fetch(url, { signal: controller.signal });
+  const [error, setError] = useState("");
 
-          if (!fetchedData.ok) {
-            throw new Error("something went wrong with fetch movies");
-          }
+  useEffect(() => {
+    const normalizedQuery = query.trim();
 
-          let obj = await fetchedData.json();
-          if (obj.Response === "False") {
-            throw new Error("move not found");
-          }
-          setMovies(obj.Search);
-          setError("");
-        } catch (error) {
-          if (error.name !== "AbortError") setError(error.message);
-        } finally {
-          setIsLoading(false);
-        }
-      }
+    // ✅ برای query های خیلی کوتاه اصلاً سرچ نکن
+    if (normalizedQuery.length < 3) {
+      setMovies([]);
+      setError("");
+      setIsLoading(false);
+      return;
+    }
 
-      if (query.trim().length < 3) {
-        setMovies([]);
+    // ✅ فقط وقتی سرچ واقعی شروع شد، فیلم انتخاب‌شده رو ببند
+    callBack?.();
+
+    const controller = new AbortController();
+
+    async function getData() {
+      const url = `https://www.omdbapi.com/?apikey=${KEY}&s=${encodeURIComponent(
+        normalizedQuery
+      )}`;
+
+      try {
+        setIsLoading(true);
         setError("");
-        return;
-      }
 
-      getData();
-      return function () {
-        controller.abort();
-      };
-    },
-    [query, callBack]
-  );
+        const res = await fetch(url, { signal: controller.signal });
+
+        if (!res.ok) {
+          throw new Error("Something went wrong while fetching movies.");
+        }
+
+        const data = await res.json();
+
+        if (data.Response === "False") {
+          throw new Error(data.Error || "Movie not found.");
+        }
+
+        setMovies(data.Search || []);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(err.message);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    getData();
+
+    return () => controller.abort();
+  }, [query, callBack]);
+
   return { error, isLoading, movies };
 }
+
 export default useMovies;
