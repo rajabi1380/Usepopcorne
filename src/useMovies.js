@@ -12,8 +12,9 @@ function useMovies(query, callBack) {
         try {
           setIsLoading(true);
           setError("");
+          // Use https to avoid mixed-content errors on production.
           let fetchedData = await fetch(
-            ` http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
             { signal: controller.signal }
           );
 
@@ -39,13 +40,13 @@ function useMovies(query, callBack) {
         setError("");
         return;
       }
-    
+
       getData();
       return function () {
         controller.abort();
       };
     },
-    [query]
+    [query, callBack]
   );
   return { error, isLoading, movies };
 }
